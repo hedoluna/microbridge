@@ -1,0 +1,54 @@
+= Getting started =
+
+This short guide will help you to get started with MicroBridge. The examples assume Linux (Ubuntu 10.04), but you should be able to make it work on other platforms that support the standard avr tools.
+
+= Hardware =
+
+== Sparkfun shield ==
+
+MicroBridge was developed using an [http://arduino.cc/en/Main/ArduinoBoardMega Arduino Mega] and a [http://www.sparkfun.com/products/9947 Sparkfun USB Host shield]. Currently MicroBridge supports the Arduino Mega only, if anyone is interested in porting to/testing on 'small' Arduinos, please let me know. 
+
+Since the mega has its SPI pins in a different location from the 'regular' Arduinos, I made a small adaptor shield. If you're using the USB host shield with the Arduino mega you'll have to do a similar hardware hack. Note that I went with a separate shield because it also acts as a raiser for connecting servos to a [http://www.emartee.com/product/41953/Arduino-Sensor-Shield-V5.0 sensor shield] that can be mounted below it.
+
+Here's a picture of my [http://www.dfrobot.com/index.php?route=product/product&path=35_38&product_id=50 Arduino Mega clone] and the adapter shield I made, please ignore the hotglue nastyness :)
+
+http://i55.tinypic.com/14c9wft.jpg
+
+The USB host shield goes on top. Note that the SparkFun shield requires an external power source to work.
+
+http://i53.tinypic.com/f1gx9h.jpg
+
+== USB 2.0 shield ==
+
+The SparkFun shield was based on a design by [http://circuits@home Oleg], 
+and he has released a new [http://www.circuitsathome.com/products-page/arduino-shields/usb-host-shield-2-0-for-arduino/ 2.0 version of the shield] that is compatible with the Mega out of the box. Unfortunately I don't own this shield, so I haven't been able to test it with MicroBridge.
+
+= Software =
+
+== Prerequisites ==
+
+I'm going to assume you're on Linux and have the standard avr development packages installed, as well as doxygen and make. I've included an upload script that resets the Arduino by pulsing the DTR line, it uses a perl library called {{{libdevice-serialport-perl}}}. For this example I'm using putty, so you might want to grab that too. On Ubuntu, you can type:
+
+{{{
+sudo apt-get install gcc-avr gdb-avr avr-libc binutils-avr avrdude doxygen make libdevice-serialport-perl
+}}}
+
+== Checking out the code and building ==
+
+Grab the source from SVN, go into {{{/trunk/src/mcu}}} and type {{{make}}}.
+
+== Running ==
+
+Upload the resulting elf/ihex to your arduino with your favorite bootloader tool (i.e. avrdude) or use the {{{program}}} script provided.
+
+Now open putty, and enter the path to your Arduino's USB serial device into the host name field (i.e. {{{/dev/ttyUSB0}}}). Set connection type to 'serial', and baud rate to 57600. In the 'terminal' settings, check 'Implicit CR in every LF'. Optionally save these settings by typing a name for the connection in the 'saved sessions' field an hit 'save'. 
+
+Now hit 'connect'. If all goes well you should see the following:
+
+{{{
+ADB EVENT CONNECT
+ADB EVENT OPEN connection=[shell:]
+# 
+}}}
+
+Now you can type into the shell and issue commands, such as 'ls' to get a directory listing.
