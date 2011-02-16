@@ -30,7 +30,7 @@ and he has released a new [http://www.circuitsathome.com/products-page/arduino-s
 I'm going to assume you're on Linux and have the standard avr development packages installed, as well as doxygen and make. I've included an upload script that resets the Arduino by pulsing the DTR line, it uses a perl library called {{{libdevice-serialport-perl}}}. For this example I'm using putty, so you might want to grab that too. On Ubuntu, you can type:
 
 {{{
-sudo apt-get install gcc-avr gdb-avr avr-libc binutils-avr avrdude doxygen make libdevice-serialport-perl
+sudo apt-get install gcc-avr gdb-avr avr-libc binutils-avr avrdude doxygen make libdevice-serialport-perl putty
 }}}
 
 == Checking out the code and building ==
