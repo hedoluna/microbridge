@@ -46,3 +46,67 @@ ADB EVENT OPEN connection=[shell:]
 }}}
 
 Now you can type into the shell and issue commands, such as 'ls' to get a directory listing.
+
+= Writing your own program =
+
+The quickest way to get your own Android app to talk to your Arduino is by using logcat. 
+
+== Android side ==
+
+Write a simple Android application, perhaps with a button or a slider, and connect an event handler. Inside the handler simply use Android's built-in logging facility to output some data. For example:
+
+{{{Log.d("MYAPP", "Hello from Android!");}}}
+
+== Arduino side ==
+
+The arduino can now catch this message by connecting to the phone and reading logcat through adb.
+
+A minimal program would look something like this (included in the source tree as example.c):
+
+{{{
+#include "avr.h"
+#include "adb.h"
+
+// Event handler to process incoming data from ADB.
+void adbEventHandler(adb_connection * connection, adb_eventType event, uint16_t length, uint8_t * data)
+{
+	int i;
+
+	switch (event)
+	{
+	case ADB_CONNECTION_RECEIVE:
+
+		// Write the results to UART
+		for (i=0; i<length; i++)
+			avr_serialPrintf("%c", data[i]);
+
+		break;
+	default:
+		break;
+	}
+
+}
+
+int main()
+{
+	// Initialise avr timers
+	avr_timerInit();
+
+	// Initialise serial port
+	avr_serialInit(57600);
+
+ 	// Initialise ADB connection
+	adb_init();
+
+	// Create a new ADB connection, run logcat
+	adb_addConnection("shell:exec logcat -s MYAPP:*", false, adbEventHandler);
+
+	// ADB polling.
+	while (1)
+		adb_poll();
+
+	return 0;
+}
+}}}
+
+The call {{{adb_addConnection("shell:exec logcat -s MYAPP:*", false, adbEventHandler);}}} creates a new connection that starts the logcat program on the phone side and pipes stdout over ADB back to the Arduino. The boolean argument {{{persistent}}} is to indicate whether to automatically reconnect when the connection is closed or the device is reconnected. Note that MicroBridge is event based, so an event handler must be provided to process the incoming data.
