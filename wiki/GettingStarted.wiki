@@ -6,22 +6,16 @@ This short guide will help you to get started with MicroBridge. The examples ass
 
 == Sparkfun shield ==
 
-MicroBridge was developed using an [http://arduino.cc/en/Main/ArduinoBoardMega Arduino Mega] and a [http://www.sparkfun.com/products/9947 Sparkfun USB Host shield]. Currently MicroBridge supports the Arduino Mega only, if anyone is interested in porting to/testing on 'small' Arduinos, please let me know. 
+MicroBridge was developed initially using an [http://arduino.cc/en/Main/ArduinoBoardMega Arduino Mega] and a [http://www.sparkfun.com/products/9947 Sparkfun USB Host shield], but the 'smaller' Arduinos like the [http://arduino.cc/en/Main/ArduinoBoardUno Uno] and [http://www.arduino.cc/en/Main/ArduinoBoardDiecimila Deicimila] are also supported. 
 
-Since the mega has its SPI pins in a different location from the 'regular' Arduinos, I made a small adaptor shield. If you're using the USB host shield with the Arduino mega you'll have to do a similar hardware hack. Note that I went with a separate shield because it also acts as a raiser for connecting servos to a [http://www.emartee.com/product/41953/Arduino-Sensor-Shield-V5.0 sensor shield] that can be mounted below it.
+Here's a picture of a Uno with the USB host shield connected to my Android phone. In case you were wondering, it's a [http://en.wikipedia.org/wiki/ZTE_Blade ZTE Blade].
 
-Here's a picture of my [http://www.dfrobot.com/index.php?route=product/product&path=35_38&product_id=50 Arduino Mega clone] and the adapter shield I made, please ignore the hotglue nastyness :)
-
-http://i55.tinypic.com/14c9wft.jpg
-
-The USB host shield goes on top. Note that the SparkFun shield requires an external power source to work.
-
-http://i53.tinypic.com/f1gx9h.jpg
+http://i54.tinypic.com/b7j5o8.jpg
 
 == USB 2.0 shield ==
 
 The SparkFun shield was based on a design by [http://circuits@home Oleg], 
-and he has released a new [http://www.circuitsathome.com/products-page/arduino-shields/usb-host-shield-2-0-for-arduino/ 2.0 version of the shield] that is compatible with the Mega out of the box. Unfortunately I don't own this shield, so I haven't been able to test it with MicroBridge.
+and he has released a new [http://www.circuitsathome.com/products-page/arduino-shields/usb-host-shield-2-0-for-arduino/ 2.0 version of the shield] that is compatible with the Mega out of the box. 
 
 = Software =
 
@@ -35,11 +29,11 @@ sudo apt-get install gcc-avr gdb-avr avr-libc binutils-avr avrdude doxygen make 
 
 == Checking out the code and building ==
 
-Grab the source from SVN, go into {{{/trunk/src/mcu}}} and type {{{make}}}.
+Grab the source from SVN, go into {{{/trunk/src/mcu}}} and edit the makefile. Set the {{{MMCU}}} variable to the correct chip depending on your board (i.e. 328p for the Uno), and type {{{make}}}. 
 
 == Running ==
 
-Upload the resulting elf/ihex to your arduino with your favorite bootloader tool (i.e. avrdude) or use the {{{program}}} script provided.
+Upload the resulting elf/ihex to your Arduino with your favorite bootloader tool (i.e. avrdude) or use the {{{program}}} script provided.
 
 Now open putty, and enter the path to your Arduino's USB serial device into the host name field (i.e. {{{/dev/ttyUSB0}}}). Set connection type to 'serial', and baud rate to 57600. In the 'terminal' settings, check 'Implicit CR in every LF'. Optionally save these settings by typing a name for the connection in the 'saved sessions' field an hit 'save'. 
 
