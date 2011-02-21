@@ -109,4 +109,8 @@ int main()
 }
 }}}
 
-The call {{{adb_addConnection("shell:exec logcat -s MYAPP:*", false, adbEventHandler);}}} creates a new connection that starts the logcat program on the phone side and pipes stdout over ADB back to the Arduino. The boolean argument {{{persistent}}} is to indicate whether to automatically reconnect when the connection is closed or the device is reconnected. Note that MicroBridge is event based, so an event handler must be provided to process the incoming data.
+The line
+
+{{{adb_addConnection("shell:exec logcat -s MYAPP:*", false, adbEventHandler);}}}
+
+creates a new connection that starts the logcat program on the phone side and pipes stdout over ADB back to the Arduino. The boolean argument {{{persistent}}} is to indicate whether to automatically reconnect when the connection is closed or the device is reconnected. Note that MicroBridge is event based, so an event handler must be provided to process the incoming data.
