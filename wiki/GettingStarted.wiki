@@ -1,116 +1,23 @@
 = Getting started =
 
-This short guide will help you to get started with MicroBridge. The examples assume Linux (Ubuntu 10.04), but you should be able to make it work on other platforms that support the standard avr tools.
+This short guide will help you to get started with MicroBridge. 
 
 = Hardware =
 
-== Sparkfun shield ==
-
-MicroBridge was developed initially using an [http://arduino.cc/en/Main/ArduinoBoardMega Arduino Mega] and a [http://www.sparkfun.com/products/9947 Sparkfun USB Host shield], but the 'smaller' Arduinos like the [http://arduino.cc/en/Main/ArduinoBoardUno Uno] and [http://www.arduino.cc/en/Main/ArduinoBoardDiecimila Deicimila] are also supported. 
+MicroBridge was developed using a [http://www.sparkfun.com/products/9947 Sparkfun USB Host shield], in combination with one of the 'smaller' Arduinos like the [http://arduino.cc/en/Main/ArduinoBoardUno Uno] and [http://www.arduino.cc/en/Main/ArduinoBoardDiecimila Deicimila].  
 
 Here's a picture of a Uno with the USB host shield connected to my Android phone. In case you were wondering, it's a [http://en.wikipedia.org/wiki/ZTE_Blade ZTE Blade].
 
 http://i54.tinypic.com/b7j5o8.jpg
 
-== USB 2.0 shield ==
-
-The SparkFun shield was based on a design by [http://circuits@home Oleg], 
-and he has released a new [http://www.circuitsathome.com/products-page/arduino-shields/usb-host-shield-2-0-for-arduino/ 2.0 version of the shield] that is compatible with the Mega out of the box. 
+Note the external power source to supply VBUS. Alternatively you can also use Oleg Mazurov's [http://www.circuitsathome.com/products-page/arduino-shields/usb-host-shield-2-0-for-arduino/ USB host shield 2.0] which doesn't need an external power source and compatible with the Arduino Mega, which the Sparkfun shield is not.
 
 = Software =
 
-== Prerequisites ==
+I'm going to assume you have basic programming knowledge and know your way around an Arduino and the Arduino IDE. If you don't want to use the Wiring system, you can always use the [http://code.google.com/p/microbridge/source/browse/#svn%2Ftrunk%2Fsrc%2Fmcu C version]. I'm currently using the Arduino IDE version 0022.
 
-I'm going to assume you're on Linux and have the standard avr development packages installed, as well as doxygen and make. I've included an upload script that resets the Arduino by pulsing the DTR line, it uses a perl library called {{{libdevice-serialport-perl}}}. For this example I'm using putty, so you might want to grab that too. On Ubuntu, you can type:
+== Running the examples ==
 
-{{{
-sudo apt-get install gcc-avr gdb-avr avr-libc binutils-avr avrdude doxygen make libdevice-serialport-perl putty
-}}}
+Download the Adb library [http://code.google.com/p/microbridge/downloads/detail?name=MicroBridge-Arduino.zip&can=2&q=#makechanges here] and unpack it into the libraries directory of your Arduino installation, this should give you an 'Adb' directory. 
 
-== Checking out the code and building ==
-
-Grab the source from SVN, go into {{{/trunk/src/mcu}}} and edit the makefile. Set the {{{MMCU}}} variable to the correct chip depending on your board (i.e. 328p for the Uno), and type {{{make}}}. 
-
-== Running ==
-
-Upload the resulting elf/ihex to your Arduino with your favorite bootloader tool (i.e. avrdude) or use the {{{program}}} script provided.
-
-Now open putty, and enter the path to your Arduino's USB serial device into the host name field (i.e. {{{/dev/ttyUSB0}}}). Set connection type to 'serial', and baud rate to 57600. In the 'terminal' settings, check 'Implicit CR in every LF'. Optionally save these settings by typing a name for the connection in the 'saved sessions' field an hit 'save'. 
-
-Now hit 'connect'. If all goes well you should see the following:
-
-{{{
-ADB EVENT CONNECT
-ADB EVENT OPEN connection=[shell:]
-# 
-}}}
-
-Now you can type into the shell and issue commands, such as 'ls' to get a directory listing.
-
-= Writing your own program =
-
-The quickest way to get your own Android app to talk to your Arduino is by using logcat. 
-
-== Android side ==
-
-Write a simple Android application, perhaps with a button or a slider, and connect an event handler. Inside the handler simply use Android's built-in logging facility to output some data. For example:
-
-{{{Log.d("MYAPP", "Hello from Android!");}}}
-
-== Arduino side ==
-
-The arduino can now catch this message by connecting to the phone and reading logcat through adb.
-
-A minimal program would look something like this (included in the source tree as example.c):
-
-{{{
-#include "avr.h"
-#include "adb.h"
-
-// Event handler to process incoming data from ADB.
-void adbEventHandler(adb_connection * connection, adb_eventType event, uint16_t length, uint8_t * data)
-{
-	int i;
-
-	switch (event)
-	{
-	case ADB_CONNECTION_RECEIVE:
-
-		// Write the results to UART
-		for (i=0; i<length; i++)
-			avr_serialPrintf("%c", data[i]);
-
-		break;
-	default:
-		break;
-	}
-
-}
-
-int main()
-{
-	// Initialise avr timers
-	avr_timerInit();
-
-	// Initialise serial port
-	avr_serialInit(57600);
-
- 	// Initialise ADB connection
-	adb_init();
-
-	// Create a new ADB connection, run logcat
-	adb_addConnection("shell:exec logcat -s MYAPP:*", false, adbEventHandler);
-
-	// ADB polling.
-	while (1)
-		adb_poll();
-
-	return 0;
-}
-}}}
-
-The line
-
-{{{adb_addConnection("shell:exec logcat -s MYAPP:*", false, adbEventHandler);}}}
-
-creates a new connection that starts the logcat program on the phone side and pipes stdout over ADB back to the Arduino. The boolean argument {{{persistent}}} is to indicate whether to automatically reconnect when the connection is closed or the device is reconnected. Note that MicroBridge is event based, so an event handler must be provided to process the incoming data.
+Restart the IDE if you already had it running to make it detect the new library. If the installation was successful, you should be able to go into file->examples and see an Adb submenu there. Select the Shell example and upload it to your device. On your phone, enable debugging if you hadn't already (settings->applications->development->USB debugging). Now connect your phone to the host shield and open a terminal to the Arduino (57600 baud). If all is working as it should, you should now be presented with an interactive Unix terminal.
