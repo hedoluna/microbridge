@@ -21,3 +21,13 @@ I'm going to assume you have basic programming knowledge and know your way aroun
 Download the Adb library [http://code.google.com/p/microbridge/downloads/detail?name=MicroBridge-Arduino.zip&can=2&q=#makechanges here] and unpack it into the libraries directory of your Arduino installation, this should give you an 'Adb' directory. 
 
 Restart the IDE if you already had it running to make it detect the new library. If the installation was successful, you should be able to go into file->examples and see an Adb submenu there. Select the Shell example and upload it to your device. On your phone, enable debugging if you hadn't already (settings->applications->development->USB debugging). Now connect your phone to the host shield and open a terminal to the Arduino (57600 baud). If all is working as it should, you should now be presented with an interactive Unix terminal.
+
+== Demo Application ==
+
+Choose the Demo application from the examples and upload it to your Arduino board. Connect two servos to digital pins 2 and 3, and an analog sensor (pot meter, distance sensor, etc.) to A0. 
+
+Download the Android application [http://code.google.com/p/microbridge/downloads/detail?name=MicroBridge-DemoApp.zip&can=2&q=#makechanges here], import into eclipse, compile, and run on your phone. This demo application contains a small TCP server that listens on port 4567, which you can use for your own projects if you wish.
+
+The result should look something like the following:
+
+<wiki:video url="http://www.youtube.com/watch?v=nbtDwlXw29I"/>
